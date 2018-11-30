@@ -8,7 +8,7 @@
   <!--加载Spring XML配置文件 -->
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value> classpath:/config/spring/spring-security.xml</param-value>
+    <param-value>classpath:/config/spring/spring-security.xml</param-value>
   </context-param>
   <!-- Spring Secutiry3.1的过滤器链配置 -->
   <filter>
