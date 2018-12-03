@@ -5,7 +5,7 @@
     <title>登录</title>
 </head>
 <body>
-<form action ="j_spring_security_check" method="POST">
+<form action ="j-spring-security-check" method="POST">
     <table>
         <tr>
             <td>用户:</td>

@@ -5,7 +5,7 @@
     <title>My JSP 'admin.jsp' starting page</title>
 </head>
 <body>
-欢迎来到管理员页面.
+请查看权限。
 <br>
 </body>
 </html>

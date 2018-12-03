@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:sharding="http://shardingjdbc.io/schema/shardingjdbc/sharding"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://shardingjdbc.io/schema/shardingjdbc/sharding
+                        http://shardingjdbc.io/schema/shardingjdbc/sharding/sharding.xsd
+						http://www.springframework.org/schema/mvc
+        				http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+
+	<!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
+	<context:component-scan base-package="com.spring.xxx" />
+
+	<mvc:annotation-driven/>
+
+	<mvc:default-servlet-handler />
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath*:config/mybatis/mapper/*.xml" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.black.fish.dao" />
+	</bean>
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<!-- 基础配置 -->
+		<property name="jdbcUrl" value=""></property>
+		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+		<property name="user" value=""></property>
+		<property name="password" value=""></property>
+		<!-- 关键配置 -->
+		<!--初始化时获取三个连接，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+		<property name="initialPoolSize" value="3"></property>
+		<!--连接池中保留的最小连接数。Default: 2 -->
+		<property name="minPoolSize" value="2"></property>
+		<!--连接池中保留的最大连接数。Default: 15 -->
+		<property name="maxPoolSize" value="15"></property>
+		<!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+		<property name="acquireIncrement" value="3"></property>
+		<!-- 性能配置 -->
+		<!-- 控制数据源内加载的PreparedStatements数量。如果maxStatements与maxStatementsPerConnection均为0，则缓存被关闭。Default: 
+			0 -->
+		<property name="maxStatements" value="8"></property>
+		<!-- maxStatementsPerConnection定义了连接池内单个连接所拥有的最大缓存statements数。Default: 
+			0 -->
+		<property name="maxStatementsPerConnection" value="5"></property>
+		<!--最大空闲时间,1800秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+		<property name="maxIdleTime" value="1800"></property>
+	</bean>
+	<!-- 
+	<sharding:standard-strategy id="tableShardingLoanIdStrategy" sharding-column="loan_id" precise-algorithm-class="com.black.fish.support.algorithm.PreciseModuloTableShardingAlgorithm"/>
+	<sharding:data-source id="shardingDataSource">
+		<sharding:sharding-rule data-source-names="BCM_DATA_SOURCE">
+			<sharding:table-rules>
+				<sharding:table-rule logic-table="contract"
+					actual-data-nodes="BCM_DATA_SOURCE.phone_isp_2017_7_12,BCM_DATA_SOURCE.phone_isp_2018_1_6,BCM_DATA_SOURCE.phone_isp_2018_7_12"
+					table-strategy-ref="tableShardingLoanIdStrategy"
+					generate-key-column="id" />
+			</sharding:table-rules>
+		</sharding:sharding-rule>
+	</sharding:data-source> -->
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 声明使用注解式事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager"
+		order="0" />
+</beans>
