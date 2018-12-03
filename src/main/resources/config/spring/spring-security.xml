@@ -3,11 +3,12 @@
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
     <!--登录页面不过滤 -->
     <security:http pattern="/login.jsp" security="none" />
-    <security:http access-denied-page="/accessDenied.jsp">
+    <!--<security:http access-denied-page="/accessDenied.jsp">-->
+    <security:http>
         <security:form-login login-page="/login.jsp" />
         <!--访问/admin.jsp资源的用户必须具有ROLE_ADMIN的权限 -->
         <!-- <intercept-url pattern="/admin.jsp" access="ROLE_ADMIN" /> -->
