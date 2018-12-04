@@ -7,21 +7,37 @@
 
     <security:http security="none" pattern="/login.jsp" />
 
+    <!--默认模式
     <security:http auto-config="true">
+        <security:csrf disabled="true" />
+        <security:form-login/>
+        <security:http-basic/>
+        <security:logout/>
+        <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')"/>
+    </security:http>
+    -->
 
+
+    <security:http auto-config="true">
         <security:csrf disabled="true" />
         <!--auto-config="true" 时 默认简写了如下 start
         <security:form-login/>
         <security:http-basic/>
         <security:logout/>
-        auto-config="true" 时 默认简写了如下 end-->
-        <security:form-login login-page="/login.jsp" />
-        <!--给登陆页面放行<security:intercept-url pattern="/login.jsp" access="hasRole('ROLE_ANONYMOUS')"/>-->
+        auto-config="true" 时 默认简写了如下  login-page="/login.jsp"end-->
+        <security:form-login
+                login-page="/login.jsp"
+                authentication-failure-url="/login.jsp"
+                default-target-url="/"
+                login-processing-url="/j_spring_security_check"/>
 
+        <security:logout logout-url="/j_spring_security_logout" logout-success-url="/login.jsp"/>
+        <!--给登陆页面放行<security:intercept-url pattern="/login.jsp" access="hasRole('ROLE_ANONYMOUS')"/>-->
         <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')"/>
+        <security:intercept-url pattern="/admin.jsp" access="ROLE_ADMIN" />
     </security:http>
 
-    <!-- 最简单的模式
+    <!--
     <security:authentication-manager>
         <security:authentication-provider>
             <security:user-service>
@@ -29,13 +45,31 @@
                 <security:user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN"/>
             </security:user-service>
         </security:authentication-provider>
-    </security:authentication-manager>
-    -->
+    </security:authentication-manager>-->
 
-    <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider>
-            <!-- 基于 Jdbc 的 UserDetailsService 实现，JdbcDaoImpl -->
-            <security:jdbc-user-service data-source-ref="dataSource"/>
+
+    <!-- 基于 Jdbc 的 UserDetailsService 实现，JdbcDaoImpl-->
+        <security:authentication-manager alias="authenticationManager">
+
+            <security:authentication-provider>
+
+                <!--密码md5盐值加密-->
+                <security:password-encoder hash="md5">
+                    <security:salt-source user-property="username"/>
+                </security:password-encoder>
+                <!--自定义表结构-->
+            <security:jdbc-user-service
+                    data-source-ref="dataSource"
+                    authorities-by-username-query="select u.username,r.name as authority
+                                             from security_users u
+                                             join security_user_role ur
+                                               on u.id=ur.user_id and ur.mark=0
+                                             join security_roles r
+                                               on r.id=ur.roles_id and r.mark=0
+                                            where u.username=? "
+                    users-by-username-query="select username,password,mark as enabled
+                                         from security_users
+                                        where username=?"/>
         </security:authentication-provider>
     </security:authentication-manager>
 

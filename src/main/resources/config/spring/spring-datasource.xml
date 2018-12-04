@@ -29,7 +29,7 @@
 	</bean>
 
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.black.fish.dao" />
+		<property name="basePackage" value="com.spring.xxx.dao" />
 	</bean>
 
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
